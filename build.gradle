@@ -16,24 +16,16 @@ repositories {
 }
 
 loom {
-    // splitEnvironmentSourceSets()
-
     mods {
         "mobcatcher" {
             sourceSet sourceSets.main
-            // sourceSet sourceSets.client
         }
     }
-}
-
-fabricApi {
-    configureDataGeneration()
 }
 
 dependencies {
     // To change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    // In this first version is used the Mojang official mappings instead of Fabric's Yarn mappings
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
