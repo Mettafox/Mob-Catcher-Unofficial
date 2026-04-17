@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "mobcatcher",
+  "version": "${version}",
+  "name": "Mob Catcher Unofficial",
+  "description": "Adds devices for moving around mobs.",
+  "authors": ["Rinko1231, Mettafox"],
+  "contact": {},
+  "license": "Public Domain",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "tfar.mobcatcher.MobCatcher"
+    ],
+    "client": [
+      "tfar.mobcatcher.MobCatcherClient"
+    ]
+  },
+  "mixins": [
+    "mobcatcher.mixins.json"
+  ],
+  "accessWidener": "mobcatcher.accesswidener",
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "1.21.1",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
