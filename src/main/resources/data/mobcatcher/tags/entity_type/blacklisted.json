@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "minecraft:painting",
-    "minecraft:player"
+    "minecraft:player",
+    "minecraft:ender_dragon"
   ]
 }
