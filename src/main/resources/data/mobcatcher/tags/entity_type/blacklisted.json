@@ -3,6 +3,7 @@
   "values": [
     "minecraft:painting",
     "minecraft:player",
-    "minecraft:ender_dragon"
+    "minecraft:ender_dragon",
+    "minecraft:wither"
   ]
 }
