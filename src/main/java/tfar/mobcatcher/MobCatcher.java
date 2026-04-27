@@ -15,12 +15,11 @@ import tfar.mobcatcher.realize.NetItem;
 
 public class MobCatcher implements ModInitializer {
 
-    public static final String MODID = "mobcatcher";
     public static final String MOD_ID = "mobcatcher";
 
     public static final TagKey<EntityType<?>> blacklisted = TagKey.create(
             Registries.ENTITY_TYPE,
-            ResourceLocation.fromNamespaceAndPath("mobcatcher", "blacklisted")
+            ResourceLocation.fromNamespaceAndPath(MOD_ID, "blacklisted")
     );
 
     @Override
@@ -31,7 +30,6 @@ public class MobCatcher implements ModInitializer {
         ModItems.register();
         ModBehaviors.registerDispenserBehaviors();
 
-        // Track the current server so NetItem can access RegistryAccess server-side
         ServerLifecycleEvents.SERVER_STARTED.register(server -> NetItem.currentServer = server);
         ServerLifecycleEvents.SERVER_STOPPED.register(server -> NetItem.currentServer = null);
     }
