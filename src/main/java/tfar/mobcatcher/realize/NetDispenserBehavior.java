@@ -12,17 +12,15 @@ import tfar.mobcatcher.config.ServerConfig;
 public class NetDispenserBehavior extends DefaultDispenseItemBehavior {
 
     @Override
-    public @NotNull ItemStack execute(BlockSource blockSource, ItemStack stack) {
-        Level level = blockSource.level();
-        Direction direction = blockSource.state().getValue(DispenserBlock.FACING);
-        double x = blockSource.pos().getX() + direction.getStepX() * 1.1D;
-        double y = blockSource.pos().getY() + direction.getStepY() * 1.1D;
-        double z = blockSource.pos().getZ() + direction.getStepZ() * 1.1D;
+    public @NotNull ItemStack execute(BlockSource source, ItemStack stack) {
+        Level level = source.level();
+        Direction direction = source.state().getValue(DispenserBlock.FACING);
 
-        ItemStack netStack = stack.copy();
-        netStack.setCount(1);
+        double x = source.pos().getX() + direction.getStepX() * 1.1D;
+        double y = source.pos().getY() + direction.getStepY() * 1.1D;
+        double z = source.pos().getZ() + direction.getStepZ() * 1.1D;
 
-        NetEntity netEntity = new NetEntity(x, y, z, level, netStack);
+        var netEntity = new NetEntity(x, y, z, level, stack.copyWithCount(1));
         netEntity.shoot(
                 direction.getStepX(),
                 direction.getStepY(),
