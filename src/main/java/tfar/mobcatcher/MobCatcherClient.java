@@ -16,7 +16,7 @@ public class MobCatcherClient implements ClientModInitializer {
 
         TooltipComponentCallback.EVENT.register(data -> {
             if (data instanceof EntityTooltip entityTooltip) {
-                return new EntityTooltipComponent(entityTooltip.getEntityTag());
+                return new EntityTooltipComponent(entityTooltip);
             }
             return null;
         });
