@@ -1,8 +1,8 @@
 {
-  "item.mobcatcher.net_launcher": "Wyrzutnia do urządzeń do przychwytywania bytów",
-  "item.mobcatcher.net": "Urządzenie do przychwytywania bytów",
-  "mobcatcher.capturing": "Łapanie",
+  "item.mobcatcher.net_launcher": "Wyrzutnia Kapsuł",
+  "item.mobcatcher.net": "Kapsuła Mob",
+  "mobcatcher.capturing": "Rejestrowanie",
   "mobcatcher.health": "Zdrowie",
-  "mobcatcher.releasing": "Uwalnianie",
+  "mobcatcher.releasing": "Wydawanie",
   "item.mobcatcher.net.with_entity": "%1$s (%2$s)"
 }
