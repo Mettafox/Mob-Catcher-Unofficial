@@ -1,4 +1,3 @@
 accessWidener v2 named
-# Make Item fields accessible (maxStackSize and maxDamage)
-accessible field net/minecraft/item/Item maxCount I
-accessible field net/minecraft/item/Item maxDamage I
+accessible field net/minecraft/world/item/Item maxStackSize I
+accessible field net/minecraft/world/item/Item maxDamage I
