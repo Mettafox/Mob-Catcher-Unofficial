@@ -15,9 +15,6 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import tfar.mobcatcher.config.ServerConfig;
 import tfar.mobcatcher.init.ModDataComponents;
-import tfar.mobcatcher.init.ModItems;
-
-import javax.annotation.Nonnull;
 
 public class NetLauncherItem extends Item {
 
@@ -31,12 +28,12 @@ public class NetLauncherItem extends Item {
     public static float getNetVelocity(int charge) {
         float f = (float) charge / 20;
         f = (f * f + f * 2) / 3;
-        f = Math.min(f, 1.5f);
-        return f;
+        return Math.min(f, 1.5f);
     }
 
     public static boolean isCaptureMode(ItemStack stack) {
-        return getCaptureMode(stack);
+        var value = stack.get(ModDataComponents.CAPTURE_MODE);
+        return value != null && value;
     }
 
     public static boolean isEmptyNet(ItemStack stack) {
@@ -47,44 +44,24 @@ public class NetLauncherItem extends Item {
         return stack.getItem() instanceof NetItem && NetItem.containsEntity(stack);
     }
 
-    public static boolean getCaptureMode(ItemStack stack) {
-        Boolean value = stack.get(ModDataComponents.CAPTURE_MODE);
-        return value != null && value;
-    }
-
     protected ItemStack findNet(Player player) {
-        ItemStack stack = player.getMainHandItem();
-        if (isCaptureMode(stack)) {
-            if (isEmptyNet(player.getItemInHand(InteractionHand.OFF_HAND))) {
-                return player.getItemInHand(InteractionHand.OFF_HAND);
-            } else if (isEmptyNet(player.getItemInHand(InteractionHand.MAIN_HAND))) {
-                return player.getItemInHand(InteractionHand.MAIN_HAND);
-            } else {
-                for (int i = 0; i < player.getInventory().getContainerSize(); ++i) {
-                    ItemStack itemstack = player.getInventory().getItem(i);
-                    if (isEmptyNet(itemstack)) return itemstack;
-                }
-            }
-            return ItemStack.EMPTY;
-        }
+        boolean capture = isCaptureMode(player.getMainHandItem());
 
-        if (isFilledNet(player.getItemInHand(InteractionHand.OFF_HAND))) {
-            return player.getItemInHand(InteractionHand.OFF_HAND);
-        } else if (isFilledNet(player.getItemInHand(InteractionHand.MAIN_HAND))) {
-            return player.getItemInHand(InteractionHand.MAIN_HAND);
-        } else {
-            for (int i = 0; i < player.getInventory().getContainerSize(); ++i) {
-                ItemStack itemstack = player.getInventory().getItem(i);
-                if (isFilledNet(itemstack)) return itemstack;
-            }
+        for (InteractionHand hand : InteractionHand.values()) {
+            ItemStack s = player.getItemInHand(hand);
+            if (capture ? isEmptyNet(s) : isFilledNet(s)) return s;
+        }
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            ItemStack s = player.getInventory().getItem(i);
+            if (capture ? isEmptyNet(s) : isFilledNet(s)) return s;
         }
         return ItemStack.EMPTY;
     }
 
     @Override
-    public void releaseUsing(@NotNull ItemStack stack, @NotNull Level worldIn,
-                              @NotNull LivingEntity entityLiving, int timeLeft) {
-        if (!(entityLiving instanceof Player player)) return;
+    public void releaseUsing(@NotNull ItemStack stack, @NotNull Level world,
+                             @NotNull LivingEntity user, int timeLeft) {
+        if (!(user instanceof Player player)) return;
 
         ItemStack netStack = findNet(player);
         if (netStack.isEmpty()) return;
@@ -93,28 +70,20 @@ public class NetLauncherItem extends Item {
         if (useTime < 0) return;
 
         float velocity = getNetVelocity(useTime);
-        if (velocity < 0.1D) return;
+        if (velocity < 0.1f) return;
 
-        if (!worldIn.isClientSide) {
-            ItemStack netStackCopy = netStack.copy();
-            if (netStackCopy.isEmpty()) {
-                netStackCopy = new ItemStack(ModItems.NET);
-            }
-
-            NetEntity netEntity = new NetEntity(worldIn, player, netStackCopy);
+        if (!world.isClientSide) {
+            var netEntity = new NetEntity(world, player, netStack.copy());
             netEntity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F,
                     velocity * (float) ServerConfig.launcherVelocityMultiplier, 0.0F);
-            worldIn.addFreshEntity(netEntity);
+            world.addFreshEntity(netEntity);
 
             if (!player.getAbilities().instabuild) {
                 netStack.shrink(1);
-                if (netStack.isEmpty()) {
-                    player.getInventory().removeItem(netStack);
-                }
             }
         }
 
-        worldIn.playSound(null, player.getX(), player.getY(), player.getZ(),
+        world.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 1.0F, 1.0F);
     }
 
@@ -123,11 +92,11 @@ public class NetLauncherItem extends Item {
         return 72000;
     }
 
-    @Nonnull
     @Override
-    public InteractionResultHolder<ItemStack> use(@NotNull Level worldIn, Player player,
-                                                   @Nonnull InteractionHand hand) {
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level world, @NotNull Player player,
+                                                           @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
+
         if (player.isCrouching()) {
             boolean current = isCaptureMode(stack);
             stack.set(ModDataComponents.CAPTURE_MODE, !current);
@@ -135,19 +104,19 @@ public class NetLauncherItem extends Item {
             return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
         }
 
-        boolean hasAmmo = !this.findNet(player).isEmpty();
-        if (!player.getAbilities().instabuild && !hasAmmo) {
+        if (!player.getAbilities().instabuild && findNet(player).isEmpty()) {
             return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
-        } else {
-            player.startUsingItem(hand);
-            return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
         }
+
+        player.startUsingItem(hand);
+        return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
     }
 
     @Override
-    @Nonnull
-    public Component getName(@Nonnull ItemStack stack) {
-        MutableComponent base = (MutableComponent) super.getName(stack);
-        return base.append(" (").append(isCaptureMode(stack) ? CAPTURE : RELEASE).append(")");
+    public @NotNull Component getName(@NotNull ItemStack stack) {
+        return ((MutableComponent) super.getName(stack))
+                .append(" (")
+                .append(isCaptureMode(stack) ? CAPTURE : RELEASE)
+                .append(")");
     }
 }
