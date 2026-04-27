@@ -1,8 +1,8 @@
 {
-  "item.mobcatcher.net_launcher": "生物捕捉发射器",
-  "item.mobcatcher.net": "生物球",
+  "item.mobcatcher.net_launcher": "膠囊發射器",
+  "item.mobcatcher.net": "暴民膠囊",
   "mobcatcher.capturing": "捕捉",
-  "mobcatcher.health": "生命值",
-  "mobcatcher.releasing": "释放",
+  "mobcatcher.health": "健康",
+  "mobcatcher.releasing": "發布",
   "item.mobcatcher.net.with_entity": "%1$s (%2$s)"
 }
