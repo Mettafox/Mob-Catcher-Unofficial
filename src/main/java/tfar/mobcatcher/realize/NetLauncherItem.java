@@ -33,7 +33,7 @@ public class NetLauncherItem extends Item {
 
     public static boolean isCaptureMode(ItemStack stack) {
         var value = stack.get(ModDataComponents.CAPTURE_MODE);
-        return value != null && value;
+        return value == null || value;
     }
 
     public static boolean isEmptyNet(ItemStack stack) {
